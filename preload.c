@@ -3,6 +3,11 @@
 #include <windows.h>
 #include <detours.h>
 
+static BOOL KeyPressed(int nVirtKey)
+{
+    return !!(GetKeyState(nVirtKey) & 0x8000);
+}
+
 static BOOL (WINAPI *Real_QueryPerformanceFrequency)(LARGE_INTEGER *lpFrequency)
     = QueryPerformanceFrequency;
 
@@ -11,7 +16,9 @@ static BOOL WINAPI Dilated_QueryPerformanceFrequency(LARGE_INTEGER *lpFrequency)
     if (!Real_QueryPerformanceFrequency(lpFrequency))
         return FALSE;
 
-    lpFrequency->QuadPart >>= 1;
+    if (KeyPressed(VK_CONTROL))
+        lpFrequency->QuadPart >>= 23;
+
     return TRUE;
 }
 
