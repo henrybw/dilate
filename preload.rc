@@ -1,0 +1,8 @@
+#include "detver.h"
+
+#define VER_INTERNALNAME_STR        "preload"
+#define VER_ORIGINALFILENAME_STR    "preload"
+#define VER_FILEDESCRIPTION_STR     "Time Dilation Preload DLL"
+#define VER_COMPANYNAME_STR         "HBW"
+
+#include "common.ver"
