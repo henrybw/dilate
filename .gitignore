@@ -1,2 +1,3 @@
 obj.x86
 bin.x86/preload.*
+bin.x86/test.*

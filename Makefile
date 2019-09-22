@@ -6,13 +6,14 @@ OBJD = obj.x86
 CFLAGS=/nologo /Zi /MT /Gm- /W3 /WX /Od /I$(INCD)
 LINKFLAGS=/release /incremental:no /profile /nodefaultlib:oldnames.lib
 
-LIBS= $(LIBD)\detours.lib kernel32.lib gdi32.lib user32.lib shell32.lib \
-	  advapi32.lib ole32.lib ws2_32.lib
+LIBS= kernel32.lib gdi32.lib user32.lib shell32.lib advapi32.lib ole32.lib \
+	  ws2_32.lib
 
-all: dirs $(BIND)/preload.dll
+all: dirs $(BIND)/preload.dll $(BIND)/test.exe
 
 clean:
 	-del /q $(BIND)\preload.* 2> nul
+	-del /q $(BIND)/test.* 2> nul
 	-rmdir /q /s $(OBJD) 2> nul
 
 dirs:
@@ -25,6 +26,7 @@ dirs:
     rc /fo$(@) /i$(INCD) $(*B).rc
 
 $(OBJD)\preload.obj: preload.c
+$(OBJD)\test.obj: test.c
 
 $(OBJD)\preload.res : preload.rc
 
@@ -32,4 +34,8 @@ $(BIND)\preload.dll: $(OBJD)\preload.obj $(OBJD)\preload.res
 	cl /LD $(CFLAGS) /Fe$(BIND)\preload.dll /Fd$(BIND)\preload.pdb \
 		$(OBJD)\preload.obj $(OBJD)\preload.res /link $(LINKFLAGS) \
 		/subsystem:console /export:DetourFinishHelperProcess,@1,NONAME \
-		$(LIBS)
+		$(LIBD)\detours.lib $(LIBS)
+
+$(BIND)\test.exe: $(OBJD)\test.obj
+	cl $(CFLAGS) /Fe$(BIND)\test.exe /Fd$(BIND)\test.pdb $(OBJD)\test.obj \
+		/link $(LINKFLAGS) /subsystem:console $(LIBS)
